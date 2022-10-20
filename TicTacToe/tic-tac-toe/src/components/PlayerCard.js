@@ -6,6 +6,8 @@ import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 const PlayerCard = (props) => {
 
     const [punteggio, setPunteggio] = useState(0);
+    const [count1, setCount1] = useState(10);
+    const [count2, setCount2] = useState(10);
 
 
     const increasePunteggio = () => {

@@ -11,7 +11,10 @@ const Home = (props) => {
     const [showBoard, setShowBoard] = useState(false);
     const [isOverPlay, setIsOverPlay] = useState(false);
     const [isOverIcon, setIsOverIcon] = useState(false);
+    const [isOverX, setIsOverX] = useState(false);
+    const [isOverO, setIsOverO] = useState(false);
     const [showPlayGrid, setShowPlayGrid] = useState(false);
+    const [playerCoice, setPlayerChoice] = useState('n');
     const [player, setPlayer] = useState({
         playerFullName: null,
         symbol: null,
@@ -29,8 +32,15 @@ const Home = (props) => {
         param === 'O' ? setIsOverIcon(true) : setIsOverIcon(false);
     }
 
-    const showGrid = () => {
+    const handleOverX = (param) => {
+        param === 'x' ? setIsOverX(true) : setIsOverX(false);
+    }
+    const handleOverO = (param) => {
+        param === 'o' ? setIsOverO(true) : setIsOverO(false);
+    }
+    const showGrid = (param) => {
         console.log('ENTRO NEL CLICK')
+        setPlayerChoice(param);
         setShowBoard(true);
     }
     const handlePlayGridOpen = () => {
@@ -59,20 +69,21 @@ const Home = (props) => {
 
     return (
         <>
-            <Box>
-                <Box>
+            <Box >
+                {!showPlayGrid ? <Box >
                     <Grid container spacing={3}>
                         <Grid item xs={4} >
                             <h1 style={{ fontSize: '60px', color: 'white', textAlign: 'center' }}>Tic</h1>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={4} >
                             <h1 style={{ fontSize: '60px', color: 'white', textAlign: 'center' }}>Tac</h1>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={4} >
                             <h1 style={{ fontSize: '60px', color: 'white', textAlign: 'center' }}>Toe</h1>
                         </Grid>
                     </Grid>
-                </Box>
+                </Box> : <></>}
+
                 <Box>
                     <Grid container spacing={3} style={{ marginBottom: '2px' }}>
                         <Grid item xs={4} style={{ border: '1px solid white' }}></Grid>
@@ -110,21 +121,34 @@ const Home = (props) => {
                     showPlayGrid ? <GameGrid showG={showPlayGrid} player={player} /> :
 
                         <Grid container spacing={3} style={{ marginTop: '2px' }}>
-                            <Grid item xs={4} style={{ borderRight: '1px solid white', borderTop: '1px solid white', borderBottom: '125px solid white' }}>
-                                <Grid container columns={4}>
-                                    <Grid item xs={1}></Grid>
-                                    <Grid item xs={2}>
+                            {isOverX ?
+                                <Grid item xs={4} onMouseOver={(event) => { handleOverX('x') }} onMouseLeave={(event) => { handleOverX('') }} onClick={(event) => showGrid('x')} style={{ borderRight: '1px solid white', borderTop: '1px solid white', borderBottom: '125px solid white', cursor: 'pointer', backgroundColor: '#4e4e59' }}>
+                                    <Grid container columns={4}>
+                                        <Grid item xs={1}></Grid>
+                                        <Grid item xs={2}>
 
-                                        <CloseIcon style={{ fontSize: '180px', color: 'white' }} />
+                                            <CloseIcon style={{ fontSize: '180px', color: 'white' }} />
 
 
+                                        </Grid>
+                                        <Grid item xs={1}></Grid>
                                     </Grid>
-                                    <Grid item xs={1}></Grid>
+                                </Grid> : <Grid item xs={4} onMouseOver={(event) => { handleOverX('x') }} onMouseLeave={(event) => { handleOverX('') }} style={{ borderRight: '1px solid white', borderTop: '1px solid white', borderBottom: '125px solid white' }}>
+                                    <Grid container columns={4}>
+                                        <Grid item xs={1}></Grid>
+                                        <Grid item xs={2}>
+
+                                            <CloseIcon style={{ fontSize: '180px', color: 'white' }} />
+
+
+                                        </Grid>
+                                        <Grid item xs={1}></Grid>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
+                            }
                             {
                                 isOverPlay ?
-                                    <Grid item xs={4} onMouseOver={(event) => { handleOver('O') }} onMouseLeave={(event) => { handleOver('') }} onClick={(event) => showGrid()} style={{ cursor: 'pointer', backgroundColor: '#4e4e59', borderLeft: '1px solid white', borderRight: '1px solid white', borderTop: '1px solid white', borderBottom: '25px solid white' }}>
+                                    <Grid item xs={4} onMouseOver={(event) => { handleOver('O') }} onMouseLeave={(event) => { handleOver('') }} onClick={(event) => showGrid('n')} style={{ cursor: 'pointer', backgroundColor: '#4e4e59', borderLeft: '1px solid white', borderRight: '1px solid white', borderTop: '1px solid white', borderBottom: '25px solid white' }}>
                                         <Grid container columns={4}>
                                             <Grid item xs={1}></Grid>
                                             <Grid item xs={2}>
@@ -150,8 +174,7 @@ const Home = (props) => {
                                             <Grid item xs={1}></Grid>
                                         </Grid>
                                     </Grid>
-                            }
-                            <Grid item xs={4} style={{ borderLeft: '1px solid white', borderTop: '1px solid white', borderBottom: '125px solid white' }}>
+                            }{isOverO ? <Grid item xs={4} onMouseOver={(event) => { handleOverO('o') }} onMouseLeave={(event) => { handleOverO('') }} onClick={(event) => showGrid('o')} style={{ borderLeft: '1px solid white', borderTop: '1px solid white', borderBottom: '125px solid white', cursor: 'pointer', backgroundColor: '#4e4e59' }}>
                                 <Grid container columns={4}>
                                     <Grid item xs={1}></Grid>
                                     <Grid item xs={2}>
@@ -162,7 +185,19 @@ const Home = (props) => {
                                     </Grid>
                                     <Grid item xs={1}></Grid>
                                 </Grid>
-                            </Grid>
+                            </Grid> : <Grid item xs={4} onMouseOver={(event) => { handleOverO('o') }} onMouseLeave={(event) => { handleOverO('') }} style={{ borderLeft: '1px solid white', borderTop: '1px solid white', borderBottom: '125px solid white' }}>
+                                <Grid container columns={4}>
+                                    <Grid item xs={1}></Grid>
+                                    <Grid item xs={2}>
+
+                                        <PanoramaFishEyeIcon style={{ fontSize: '180px', color: 'white' }} />
+
+
+                                    </Grid>
+                                    <Grid item xs={1}></Grid>
+                                </Grid>
+                            </Grid>}
+
 
                         </Grid>
                 }
@@ -174,6 +209,7 @@ const Home = (props) => {
                         handleGridOpen={handlePlayGridOpen}
                         setPlayer={setPlayer}
                         player={player}
+                        playerChoice={playerCoice}
                     /> : <></>
                 }
 

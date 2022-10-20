@@ -12,7 +12,7 @@ const RegistrationForm = (props) => {
 
     //const [open, setOpen] = useState(false);
     const [name, setName] = useState('');
-    const [symbol, setSymbol] = useState(null);
+    const [symbol, setSymbol] = useState(props.playerChoice);
 
     const handleClose = () => {
         props.closeDialog();
@@ -27,16 +27,18 @@ const RegistrationForm = (props) => {
     }
 
     const openGrid = () => {
-        if (name === '' || symbol === null) {
+        if (name === '' || symbol === 'n') {
             alert('FIELDS CANNOT BE EMPTY');
         } else {
             props.handleGridOpen();
             props.setPlayer({
                 playerFullName: name,
-                symbol: symbol
+                symbol: symbol,
+                id: null
             })
             //props.setPlayer(props.player);
             props.closeDialog();
+            window.scrollTo(<GameGrid />);
         }
     }
 
@@ -45,13 +47,18 @@ const RegistrationForm = (props) => {
         //props.setPlayer((props) => ({ ...props.player, [param.target.name]: param.target.value }));
     }
 
-    const newForm = () => {
+    const newForm = (param) => {
         return (
-            <FormControl sx={{ marginTop: '15px' }}>
+            <FormControl sx={{ marginTop: '15px', marginLeft: [param] }}>
                 {/* <InputLabel>Full Name</InputLabel> */}
-                <FormHelperText
-                    sx={{ fontSize: '13.5px' }}
-                    id="my-playerFullName-text">Enter your Full Name</FormHelperText>
+                {props.playerChoice === 'n' ?
+                    <FormHelperText
+                        sx={{ fontSize: '16px' }}
+                        id="my-playerFullName-text">Enter your Full Name</FormHelperText> :
+                    <FormHelperText
+                        sx={{ fontSize: '33px' }}
+                        id="my-playerFullName-text">Enter your Full Name</FormHelperText>
+                }
                 <Input fullWidth id="playerFullName"
                     aria-describedby="my-helper-text"
                     required
@@ -79,66 +86,110 @@ const RegistrationForm = (props) => {
     }
 
 
+
+
     return (
         <>
-            <Box style={{ borderRadius: '30px' }}>
-                <Dialog
-                    open={props.open}
-                    // onClose={handleClose}
-                    fullWidth
-                >
-                    <DialogTitle style={{ backgroundColor: '#bfbbbc', color: '#282830', textAlign: 'center', fontSize: '50px', fontFamily: 'Gill Sans' }}>PLAYER INFORMATIONS</DialogTitle>
-                    <DialogContent style={{ backgroundColor: '#bfbbbc' }}>
+            {
 
-                        {/* <DialogContentText style={{ color: 'white' }}>
+                props.playerChoice === 'n' ? <Box style={{ borderRadius: '30px' }}>
+                    <Dialog
+                        open={props.open}
+                        // onClose={handleClose}
+                        fullWidth
+                    >
+                        <DialogTitle style={{ backgroundColor: '#bfbbbc', color: '#282830', textAlign: 'center', fontSize: '50px', fontFamily: 'Gill Sans' }}>PLAYER INFORMATIONS</DialogTitle>
+                        <DialogContent style={{ backgroundColor: '#bfbbbc' }}>
+
+                            {/* <DialogContentText style={{ color: 'white' }}>
                             Player's full name
                         </DialogContentText> */}
-                        <Grid container spacing={3}>
-                            <Grid item xs={4}>
-                                {
-                                    // choosing 2 different form
+                            <Grid container spacing={3}>
+                                <Grid item xs={4}>
+                                    {
+                                        // choosing 2 different form
 
-                                    true ? newForm() :
-                                        <TextField
-                                            sx={{ input: { color: 'white', borderColor: 'white' }, label: { color: 'white' }, margin: { color: 'white' } }}
-                                            autoFocus
-                                            margin="dense"
-                                            id="playerFullName"
-                                            label="Full Name"
-                                            type="fullName"
-                                            fullWidth
-                                            variant="standard"
-                                            required
-                                        />
-                                }
-                            </Grid>
-                            <Grid item xs={4} sx={{ textAlign: 'center' }}>
-                                <Grid container columns={4}>
-                                    <Grid item xs={1}></Grid>
-                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                        <PersonAddIcon sx={{ fontSize: 60, marginTop: '40px' }} />
+                                        true ? newForm('10px') :
+                                            <TextField
+                                                sx={{ input: { color: 'white', borderColor: 'white' }, label: { color: 'white' }, margin: { color: 'white' } }}
+                                                autoFocus
+                                                margin="dense"
+                                                id="playerFullName"
+                                                label="Full Name"
+                                                type="fullName"
+                                                fullWidth
+                                                variant="standard"
+                                                required
+                                            />
+                                    }
+                                </Grid>
+                                <Grid item xs={4} sx={{ textAlign: 'center' }}>
+                                    <Grid container columns={4}>
+                                        <Grid item xs={1}></Grid>
+                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                            <PersonAddIcon sx={{ fontSize: 60, marginTop: '40px' }} />
+                                        </Grid>
+                                        <Grid item xs={1}></Grid>
                                     </Grid>
-                                    <Grid item xs={1}></Grid>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    {newBtn()}
                                 </Grid>
                             </Grid>
-                            <Grid item xs={4}>
-                                {newBtn()}
-                            </Grid>
-                        </Grid>
-                    </DialogContent>
+                        </DialogContent>
 
-                    <DialogActions style={{ backgroundColor: '#bfbbbc' }}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={4}></Grid>
-                            <Grid item xs={4}>
-                                <Button sx={{ color: '#282830', fontSize: '15px' }} onClick={handleClose}>Cancel</Button>
-                                <Button sx={{ color: '#282830', fontSize: '15px' }} onClick={openGrid}>START</Button>
+                        <DialogActions style={{ backgroundColor: '#bfbbbc' }}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={4}></Grid>
+                                <Grid item xs={4}>
+                                    <Button sx={{ color: '#282830', fontSize: '15px' }} onClick={handleClose}>Cancel</Button>
+                                    <Button sx={{ color: '#282830', fontSize: '15px' }} onClick={openGrid}>START</Button>
+                                </Grid>
+                                <Grid item xs={4}></Grid>
                             </Grid>
-                            <Grid item xs={4}></Grid>
-                        </Grid>
-                    </DialogActions>
-                </Dialog>
-            </Box>
+                        </DialogActions>
+                    </Dialog>
+                </Box> :
+                    // HERE STARTS THE SECOND FORM
+                    <Box style={{ borderRadius: '30px' }}>
+                        <Dialog
+                            open={props.open}
+                            // onClose={handleClose}
+                            fullWidth
+                        >
+                            <DialogTitle style={{ backgroundColor: '#bfbbbc', color: '#282830', textAlign: 'center', fontSize: '50px', fontFamily: 'Gill Sans' }}>PLAYER INFORMATIONS</DialogTitle>
+                            <DialogContent style={{ backgroundColor: '#bfbbbc' }}>
+
+                                {/* <DialogContentText style={{ color: 'white' }}>
+                            Player's full name
+                        </DialogContentText> */}
+
+                                {
+                                    newForm('70px')
+                                }
+                                <div style={{ textAlign: 'center', paddingTop: '10px' }}>
+                                    {props.playerChoice === 'x' ? <CloseIcon style={{ fontSize: '80px' }} /> : <PanoramaFishEyeIcon style={{ fontSize: '80px' }} />}
+                                    {/* <PersonAddIcon sx={{ fontSize: 60, marginTop: '40px' }} /> */}
+                                </div>
+
+
+
+
+                            </DialogContent>
+
+                            <DialogActions style={{ backgroundColor: '#bfbbbc', paddingLeft: '40px' }}>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={4}></Grid>
+                                    <Grid item xs={4}>
+                                        <Button sx={{ color: '#282830', fontSize: '15px' }} onClick={handleClose}>Cancel</Button>
+                                        <Button sx={{ color: '#282830', fontSize: '15px' }} onClick={openGrid}>START</Button>
+                                    </Grid>
+                                    <Grid item xs={4}></Grid>
+                                </Grid>
+                            </DialogActions>
+                        </Dialog>
+                    </Box>
+            }
         </>
     )
 }

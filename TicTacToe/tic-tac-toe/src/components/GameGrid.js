@@ -3,19 +3,30 @@ import '../App.css';
 import CardSlot from './CardSlot';
 
 import PlayerCard from './PlayerCard';
-import { Grid, Box } from '@mui/material';
+import { Grid, Box, DialogContent } from '@mui/material';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 
 const GameGrid = (props) => {
 
     const [isOver, setIsOver] = useState(false);
+    const [color, setColor] = useState('#282830');
     const [val, setVal] = useState(props.player.symbol);
     const [cursor, setCursor] = useState('pointer');
     const [p1, setP1] = useState(true);
     const [p2, setP2] = useState(false);
+    const [count, setCount] = useState(3);
     const [comp, setComp] = useState({
-        playerFullName: 'COMPUTER'
+        playerFullName: 'COMPUTER',
+        symbol: '',
+        id: null
 
     });
+    const [grigliaDiGioco, setGrigliaDiGioco] = useState([
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ])
     const [turn, setTurn] = useState({
         a: val,
         b: val,
@@ -26,16 +37,6 @@ const GameGrid = (props) => {
         g: val,
         h: val,
         i: val
-
-        // a: props.player.symbol,
-        // b: props.player.symbol,
-        // c: props.player.symbol,
-        // d: props.player.symbol,
-        // e: props.player.symbol,
-        // f: props.player.symbol,
-        // g: props.player.symbol,
-        // h: props.player.symbol,
-        // i: props.player.symbol
     });
     const [player, setPlayer] = useState(props.player);
     const [matrix, setMatrix] = useState({
@@ -62,14 +63,43 @@ const GameGrid = (props) => {
         i: false
     })
 
+    const [dialog, setDialog] = useState(true);
+
 
     useEffect(() => {
         //console.log(' 3 ENTRO NELLO USE EFFECT GRID');
     }, [matrix])
 
     useEffect(() => {
+        if (count > 1) {
+            setTimeout(() => setCount(count - 1), 1000);
+        }
+        else {
+            setTimeout(() => handleClose(), 1000);
 
-    }, [])
+        }
+    }, [count])
+
+    const handleClose = () => {
+
+        setDialog(false);
+
+    };
+
+
+    const beginningDialog = () => {
+        return (
+
+            <Dialog onClose={handleClose} open={dialog} >
+                <DialogTitle sx={{ backgroundColor: '#282830', color: 'white', fontSize: '50px' }}>GAME STARTS IN</DialogTitle>
+                <DialogContent sx={{ backgroundColor: '#282830' }}>
+
+                    <h1 style={{ fontSize: '80px', textAlign: 'center', color: 'white' }}> {count}</h1>
+                </DialogContent>
+            </Dialog>
+
+        )
+    }
 
     const play = () => {
         //console.log('ENTRA NEL PLAY', props.player)
@@ -85,7 +115,10 @@ const GameGrid = (props) => {
                         </Grid>
                         <Grid item xs={4}  >
                             <div style={{ marginBottom: '150px', textAlign: 'center', borderLeft: 'none', borderRight: 'none', marginRight: '20px' }}>
-                                <h1 style={{ color: 'white' }}>Game is ON</h1>
+                                {dialog ? <h1 style={{ color: '#282830', fontSize: '30px' }}>GAME IS ON</h1> :
+                                    <h1 style={{ color: '#07f52f', fontSize: '30px' }}>GAME IS ON</h1>
+                                }
+
 
                                 <div >
                                     <Box sx={{ flexGrow: 1 }}>
@@ -127,7 +160,9 @@ const GameGrid = (props) => {
                                         </Grid>
                                     </Box>
                                 </div>
+                                <h2 style={{ color: 'white', fontSize: '50px', cursor: 'pointer', border: '1px solid white', backgroundColor: [color] }} onClick={(event) => reset()} onMouseOver={(event) => onHover(true)} onMouseLeave={(event) => onHover(false)}>RESET</h2>
                             </div>
+
                         </Grid>
                         <Grid item xs={4} sx={{ borderLeft: '0.5px solid white', marginLeft: 'none' }}>
                             {player.symbol === 'x' ? <PlayerCard p2={p2} player={comp} symbol={'o'} btnClicked={btnClicked} /> : <PlayerCard p2={p2} player={comp} symbol={'x'} btnClicked={btnClicked} />}
@@ -140,41 +175,16 @@ const GameGrid = (props) => {
         )
     }
 
-    // const updateArr = (matrix, dx, num) => {
-    //     console.log(' 2 ENTRO NEL CAMBIO ARRAY');
-    //     matrix[dx].a = num;
-    //     matrix[dx].cl = false;
-    //     setVal(matrix[dx].a);
-    //     console.log('QUESTA E A ', matrix[dx].a)
-    //     console.log('QUESTA E VAL DOPO CAMBIO ARRAY', val);
-    //     console.log('QUESTO E MATRIX DOPO CAMBIO ', matrix);
-    //     return matrix;
-    // }
-
-    //  DA FINIRE IL GRID 3x3
-
     const mOver = (event, value, index) => {
-        // console.log('**** QUESTO E L EVENTO *****', event.type);
-        // console.log(matrix);
-        // console.log('VALORE DI ' + index + ' DOPO SETTAGGIO ', matrix[index]);
+
         if (matrixClick[index] === false) {
             //console.log(' 1 entra nell if');
             setCursor('pointer');
             setMatrix((matrix) => ({ ...matrix, [index]: value }));
-            // const tempMatrix = matrix;
-            // tempMatrix[dx].a = num;
-            //matrix[dx] = num;
-            //setMatrix((matrix) => ({ ...matrix, matrix[dx]: { a: num, cl: false } }));
-            //console.log('QUESTO `E IL VALORE DI INDICE E VALUE ', matrix[index].a);
         } else {
             setCursor('not-allowed');
 
         }
-        // if (value.type === 'mouseover') {
-        //     setIsOver(true);
-        // } else {
-        //     setIsOver(false);
-        // }
     }
 
     const btnClicked = (event, value, index) => {
@@ -215,9 +225,38 @@ const GameGrid = (props) => {
         }
     }
 
+    const reset = () => {
+        setTurn((turn) => {
+            for (let key in turn) {
+                turn[key] = val;
+            }
+            return turn;
+        });
+        setMatrix((matrix) => {
+            for (let key in matrix) {
+                matrix[key] = 0;
+            }
+            return matrix;
+        })
+        setMatrixClick((matrixClick) => {
+            for (let key in matrixClick) {
+                matrixClick[key] = false;
+            }
+            return matrixClick;
+        })
+        setCursor('pointer');
+        setComp((comp) => ({ ...comp, playerFullName: 'COMPUTER' }));
+        setP1(true);
+        setP2(false);
+    }
+
+    const onHover = (param) => {
+        param ? setColor('#4e4e59') : setColor('#282830');
+    }
+
     return (
         <>
-
+            {beginningDialog()}
             {play()}
         </>
     )
